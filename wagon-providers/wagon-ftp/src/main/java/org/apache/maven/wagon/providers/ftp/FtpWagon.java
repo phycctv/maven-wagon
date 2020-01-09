@@ -26,6 +26,7 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.InputData;
 import org.apache.maven.wagon.OutputData;
@@ -130,6 +131,13 @@ public class FtpWagon
             else
             {
                 ftp.connect( host );
+            }
+            
+            if ( ftp instanceof FTPSClient )
+            {
+            	FTPSClient ftps = ( FTPSClient ) ftp;
+            	ftps.execPBSZ( 0 );
+            	ftps.execPROT( "P" );
             }
 
             // After connection attempt, you should check the reply code to
