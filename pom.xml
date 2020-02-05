@@ -29,7 +29,7 @@ under the License.
 
   <groupId>org.apache.maven.wagon</groupId>
   <artifactId>wagon</artifactId>
-  <version>3.3.4</version>
+  <version>3.3.4-SG4P</version>
   <packaging>pom</packaging>
 
   <name>Apache Maven Wagon</name>
@@ -212,12 +212,6 @@ under the License.
     <url>https://builds.apache.org/job/maven-box/job/maven-wagon/</url>
   </ciManagement>
 
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/asf/maven/website/components/${maven.site.path}</url>
-    </site>
-  </distributionManagement>
 
   <modules>
     <module>wagon-provider-api</module>
@@ -225,7 +219,41 @@ under the License.
     <module>wagon-provider-test</module>
     <module>wagon-tcks</module>
   </modules>
+	<profiles>
+			
+		<!-- Local Oracle -->
+		<profile>
+			<id>build-local</id>
+			<properties>	
+				<nexus.url.repository>http://nexus.central.sggs.saint-gobain.com/content/repositories/saintgobain/</nexus.url.repository>
+				<nexus.url.snapshots>http://nexus.central.sggs.saint-gobain.com/content/repositories/snapshots/</nexus.url.snapshots>	
+			</properties>
+		</profile>
 
+		<!-- Tool server -->
+		<profile>
+			<id>build-prd-claranet</id>
+			<properties>	
+				<nexus.url.repository>http://nexus.central.sggs.saint-gobain.com/content/repositories/saintgobain/</nexus.url.repository>
+				<nexus.url.snapshots>http://nexus.central.sggs.saint-gobain.com/content/repositories/snapshots/</nexus.url.snapshots>	
+			</properties>
+		</profile>	
+	</profiles>	
+		<!--  ============================================================== -->
+	<!--  ================ Distribution Configuration ================== -->
+	<!--  ============================================================== -->
+	<distributionManagement>
+		<repository>
+		    <id>nexus</id>
+		    <name>Releases</name>
+		    <url>${nexus.url.repository}</url>
+		</repository>
+		<snapshotRepository>
+		    <id>nexus</id>
+		    <name>Snapshots</name>
+		    <url>${nexus.url.snapshots}</url>
+		</snapshotRepository>
+	</distributionManagement>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -447,134 +475,6 @@ under the License.
     </plugins>
   </build>
 
-  <profiles>
-
-    <profile>
-      <id>reporting</id>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <failOnError>false</failOnError>
-              <linksource>true</linksource>
-              <links>
-                <link>http://java.sun.com/j2ee/1.4/docs/api</link>
-                <link>http://commons.apache.org/collections/apidocs-COLLECTIONS_3_0/</link>
-                <link>http://commons.apache.org/logging/apidocs/</link>
-                <link>http://commons.apache.org/pool/apidocs/</link>
-                <link>http://junit.sourceforge.net/javadoc/</link>
-                <link>http://logging.apache.org/log4j/1.2/apidocs/</link>
-                <link>http://jakarta.apache.org/regexp/apidocs/</link>
-                <link>http://velocity.apache.org/engine/releases/velocity-1.5/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-artifact/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-artifact-manager/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-model/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-plugin-api/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-project/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-reporting/maven-reporting-api/apidocs/</link>
-                <link>http://maven.apache.org/ref/current/maven-settings/apidocs/</link>
-              </links>
-              <groups>
-                <group>
-                  <title>API + Test</title>
-                  <packages>org.apache.maven.wagon*</packages>
-                </group>
-                <group>
-                  <title>File Provider</title>
-                  <packages>org.apache.maven.wagon.providers.file*</packages>
-                </group>
-                <group>
-                  <title>FTP Provider</title>
-                  <packages>org.apache.maven.wagon.providers.ftp*</packages>
-                </group>
-                <group>
-                  <title>HTTP Providers</title>
-                  <packages>org.apache.maven.wagon.providers.http*:org.apache.maven.wagon.shared.http*</packages>
-                </group>
-                <group>
-                  <title>SCM Provider</title>
-                  <packages>org.apache.maven.wagon.providers.scm*</packages>
-                </group>
-                <group>
-                  <title>SSH Providers</title>
-                  <packages>org.apache.maven.wagon.providers.ssh*</packages>
-                </group>
-                <group>
-                  <title>WebDAV Provider</title>
-                  <packages>org.apache.maven.wagon.providers.webdav*:org.apache.jackrabbit.webdav*</packages>
-                </group>
-                <group>
-                  <title>HTTP TCK</title>
-                  <packages>org.apache.maven.wagon.tck.http*</packages>
-                </group>
-              </groups>
-            </configuration>
-            <reportSets>
-              <reportSet>
-                <id>non-aggregate</id>
-                <reports>
-                  <report>javadoc</report>
-                  <report>test-javadoc</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>aggregate</id>
-                <inherited>false</inherited>
-                <reports>
-                  <report>aggregate</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jxr-plugin</artifactId>
-            <reportSets>
-              <reportSet>
-                <id>non-aggregate</id>
-                <reports>
-                  <report>jxr</report>
-                  <report>test-jxr</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>aggregate</id>
-                <inherited>false</inherited>
-                <reports>
-                  <report>aggregate</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <reportSets>
-              <reportSet>
-                <id>non-aggregate</id>
-                <reports>
-                  <report>checkstyle</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>aggregate</id>
-                <inherited>false</inherited>
-                <reports>
-                  <report>checkstyle-aggregate</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>findbugs-maven-plugin</artifactId>
-            <version>3.0.4</version>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-  </profiles>
+ 
 
 </project>
